@@ -1,0 +1,15 @@
+[package]
+name = "cost-management-backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0.82"
+serde = "1.0.142"
+lambda_runtime = "0.6.0"
+lambda_http = { version = "0.6.0", default-features = true }
+aws_lambda_events = "0.6.3"
+sqlx = { version = "0.6.0", features = [ "runtime-tokio-rustls", "postgres", "uuid", "time", "chrono" ] }
+uuid = { version = "1.1.2", features = ["serde", "v4"]}
+env_logger = "0.9.0"
