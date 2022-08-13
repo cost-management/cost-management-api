@@ -43,9 +43,7 @@ impl Folder {
 #[derive(sqlx::Type, Debug, Serialize, Deserialize)]
 #[sqlx(type_name = "folder_type")]
 pub(crate) enum FolderType {
-    #[serde(rename = "CARD")]
     CARD,
-    #[serde(rename = "CASH")]
     CASH,
 }
 
@@ -69,9 +67,7 @@ impl FromStr for FolderType {
 
 #[derive(sqlx::Type, Debug, Serialize, Deserialize)]
 pub(crate) enum Currency {
-    #[serde(rename = "UAN")]
-    UAN,
-    #[serde(rename = "USD")]
+    UAH,
     USD,
 }
 
@@ -86,7 +82,7 @@ impl FromStr for Currency {
 
     fn from_str(input: &str) -> Result<Currency, Self::Err> {
         match input {
-            "UAN" => Ok(Currency::UAN),
+            "UAH" => Ok(Currency::UAH),
             "USD" => Ok(Currency::USD),
             _ => Err(()),
         }
