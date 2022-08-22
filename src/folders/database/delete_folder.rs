@@ -1,25 +1,19 @@
-#[path = "../../utils/responses.rs"]
-mod utils;
-#[path = "../../utils/database.rs"]
-mod database;
-#[path = "../../folders/entity/entities.rs"]
-mod entities;
-
 use std::str::FromStr;
-use serde_json::{json, Value};
+use serde_json::Value;
 use lambda_runtime::Error;
 use sqlx::{Connection};
 use uuid::Uuid;
+use crate::utils::{database_utils, responses};
 
-pub async fn delete_folder(body: &String) -> Result<Value, Error> {
+pub async fn delete_folder(body: &str) -> Result<Value, Error> {
 
     println!("DELETE /folder method started");
     let json_id: Value = serde_json::from_str(body)?;
-    let folder_id = Uuid::from_str(json_id["id"].as_str().unwrap()).unwrap();
+    let folder_id = Uuid::from_str(json_id["id"].as_str().unwrap())?;
 
     println!("uuid: {:?}", &folder_id);
 
-    let mut database_connection = database::create_connection().await;
+    let mut database_connection = database_utils::create_connection().await;
 
     println!("Connected to database");
 
@@ -30,11 +24,12 @@ pub async fn delete_folder(body: &String) -> Result<Value, Error> {
     database_connection.close();
     println!("Database connection is closed");
 
-    utils::get_ok_response_with_id(folder_id)
+    responses::get_ok_response_with_id(folder_id)
 }
 
 #[cfg(test)]
 mod tests {
+    use serde_json::json;
     use tokio::runtime::Runtime;
     use super::*;
 
