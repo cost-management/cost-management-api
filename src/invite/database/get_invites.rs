@@ -3,17 +3,17 @@ use serde_json::{json, Value};
 use sqlx::Connection;
 use uuid::Uuid;
 
-use crate::income::entity::entities::Income;
+use crate::invite::entity::entities::Invite;
 use crate::utils::{database_utils, responses};
 
-pub async fn get_folders(folder_id: &Uuid) -> Result<Value, Error> {
-    println!("GET /incomes method started");
+pub async fn get_invites(user_id: &Uuid) -> Result<Value, Error> {
+    println!("GET /invites method started");
     let mut database_connection = database_utils::create_connection().await;
 
     println!("Connected to database");
 
-    let response = sqlx::query_as::<_, Income>("select * from income where folder_id = $1;")
-        .bind(folder_id)
+    let response = sqlx::query_as::<_, Invite>("select folder.id, title, folder_type, currency, skin, invite.created_at, customer.email from folder join invite on folder.id = invite.folder_id join customer on customer.id = invite.invited_customer_id  where customer.id = $1;")
+        .bind(user_id)
         .fetch_all(&mut database_connection)
         .await?;
 

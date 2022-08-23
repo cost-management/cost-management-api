@@ -1,8 +1,8 @@
+use serde::{Deserialize, Serialize};
+use sqlx::types::chrono::Utc;
 use std::fmt;
 use std::str::FromStr;
 use uuid::Uuid;
-use sqlx::types::chrono::Utc;
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, sqlx::FromRow, sqlx::Type, Serialize, Deserialize)]
 pub struct Folder {
