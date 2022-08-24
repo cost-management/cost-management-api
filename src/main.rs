@@ -20,13 +20,18 @@ async fn main() -> Result<(), Error> {
 
 async fn start_lambda(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<Value, Error> {
     let user_id = Uuid::from_str(event.payload.headers.get("id").unwrap().to_str()?)?;
+
+    println!("{}", &user_id);
     //let user_id = Uuid::from_str("f89de55c-3ce0-4151-b835-b834ccbc32a1")?;
     let path = &event.payload.path.unwrap();
+    println!("{}", &path);
     let http_method = event.payload.http_method;
+    println!("{}", &http_method);
     let body = event
         .payload
         .body
         .unwrap_or_else(|| String::from("Empty body!"));
+    println!("{}", &body);
 
     let root_path = String::from("/");
     let folders_path = String::from("/folders");

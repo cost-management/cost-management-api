@@ -1,4 +1,4 @@
-use crate::folders::entity::entities::{Currency, FolderSkin, FolderType};
+use crate::folders::entity::entities::{Currency, CustomerFolderRole, FolderSkin, FolderType};
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::Utc;
 use uuid::Uuid;
@@ -10,6 +10,7 @@ pub struct Invite {
     folder_type: FolderType,
     currency: Currency,
     skin: FolderSkin,
+    customer_role: CustomerFolderRole,
     email: String,
     created_at: sqlx::types::chrono::DateTime<Utc>,
 }

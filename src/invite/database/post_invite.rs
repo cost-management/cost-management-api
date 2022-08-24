@@ -15,12 +15,7 @@ pub async fn post_invite(body: &str) -> Result<Value, Error> {
     println!("body: {:?}", body);
 
     let folder_id = Uuid::from_str(body.folder_id().to_string().replace('"', "").as_str())?;
-    let invited_customer_email = Uuid::from_str(
-        body.invited_customer_email()
-            .to_string()
-            .replace('"', "")
-            .as_str(),
-    )?;
+    let invited_customer_email = body.invited_customer_email().to_string().replace('"', "");
     let customer_role = CustomerFolderRole::from_str(
         body.customer_role()
             .to_string()
