@@ -1,10 +1,10 @@
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use serde::{Serialize, Deserialize};
 
 use crate::income::entity::entities::IncomeCategory;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct IncomeDto{
+pub struct IncomeDto {
     id: Uuid,
     title: String,
     folder_id: Uuid,
@@ -12,7 +12,7 @@ pub struct IncomeDto{
     customer_id: Uuid,
     units: i64,
     nanos: i16,
-    timezone: i16
+    timezone: i16,
 }
 
 impl IncomeDto {

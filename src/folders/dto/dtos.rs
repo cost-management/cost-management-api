@@ -1,7 +1,7 @@
-use uuid::Uuid;
-use serde::{Serialize, Deserialize};
+use crate::folders::entity::entities::{Currency, CustomerFolderRole, FolderSkin, FolderType};
+use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::Utc;
-use crate::folders::entity::entities::{Currency, FolderType, CustomerFolderRole, FolderSkin};
+use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FolderInsertDto {
@@ -47,7 +47,7 @@ pub struct FolderUpdateDto {
     title: String,
     folder_type: FolderType,
     currency: Currency,
-    skin: FolderSkin
+    skin: FolderSkin,
 }
 
 impl FolderUpdateDto {
@@ -68,9 +68,7 @@ impl FolderUpdateDto {
     }
 }
 
-impl FolderInsertDto {
-
-}
+impl FolderInsertDto {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FolderCustomerDto {
@@ -82,7 +80,7 @@ pub struct FolderCustomerDto {
     nanos: i16,
     skin: FolderSkin,
     created_at: sqlx::types::chrono::DateTime<Utc>,
-    folder_customer_metadata: Vec<FolderCustomerMetadata>
+    folder_customer_metadata: Vec<FolderCustomerMetadata>,
 }
 
 impl FolderCustomerDto {
@@ -122,16 +120,26 @@ impl FolderCustomerDto {
         nanos: i16,
         skin: FolderSkin,
         created_at: sqlx::types::chrono::DateTime<Utc>,
-        folder_customer_metadata: Vec<FolderCustomerMetadata>
+        folder_customer_metadata: Vec<FolderCustomerMetadata>,
     ) -> Self {
-        Self { id, title, folder_type, currency, units, nanos, skin, created_at, folder_customer_metadata }
+        Self {
+            id,
+            title,
+            folder_type,
+            currency,
+            units,
+            nanos,
+            skin,
+            created_at,
+            folder_customer_metadata,
+        }
     }
 }
 
 #[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub struct FolderCustomerMetadata {
     customer_id: Uuid,
-    customer_role: CustomerFolderRole
+    customer_role: CustomerFolderRole,
 }
 
 impl FolderCustomerMetadata {
@@ -142,6 +150,9 @@ impl FolderCustomerMetadata {
         self.customer_role
     }
     pub fn new(customer_id: Uuid, customer_role: CustomerFolderRole) -> Self {
-        Self { customer_id, customer_role }
+        Self {
+            customer_id,
+            customer_role,
+        }
     }
 }
