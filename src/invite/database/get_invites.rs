@@ -18,7 +18,7 @@ pub async fn get_invites(user_id: &Uuid) -> Result<Value, Error> {
         .await?;
 
     database_connection.close();
-    println!("Incomes from db: {:?}", &response);
+    println!("Invites from db: {:?}", &response);
 
     responses::get_ok_response(json!(response))
 }
