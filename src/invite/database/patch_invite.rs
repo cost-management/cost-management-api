@@ -5,12 +5,12 @@ use sqlx::Connection;
 use std::str::FromStr;
 use uuid::Uuid;
 
-use crate::invite::dto::dtos::InviteDto;
+use crate::invite::dto::dtos::InvitePatchDto;
 use crate::utils::{database_utils, responses};
 
 pub async fn patch_invite(body: &str) -> Result<Value, Error> {
     println!("PATCH /invites method started");
-    let body: InviteDto = serde_json::from_str(body)?;
+    let body: InvitePatchDto = serde_json::from_str(body)?;
 
     println!("body: {:?}", body);
 

@@ -5,18 +5,18 @@ use sqlx::Connection;
 use std::str::FromStr;
 use uuid::Uuid;
 
-use crate::invite::dto::dtos::InviteDto;
+use crate::invite::dto::dtos::InvitePostDto;
 use crate::utils::{database_utils, responses};
 
 pub async fn post_invite(body: &str) -> Result<Value, Error> {
     println!("POST /invites method started");
-    let body: InviteDto = serde_json::from_str(body)?;
+    let body: InvitePostDto = serde_json::from_str(body)?;
 
     println!("body: {:?}", body);
 
     let folder_id = Uuid::from_str(body.folder_id().to_string().replace('"', "").as_str())?;
-    let invited_customer_id = Uuid::from_str(
-        body.invited_customer_id()
+    let invited_customer_email = Uuid::from_str(
+        body.invited_customer_email()
             .to_string()
             .replace('"', "")
             .as_str(),
@@ -36,10 +36,10 @@ pub async fn post_invite(body: &str) -> Result<Value, Error> {
     println!("Connected to database");
 
     sqlx::query(
-        "INSERT INTO invite (folder_id, invited_customer_id, customer_role, created_at) VALUES ($1, $2, $3, 'now()');",
+        "insert into invite (folder_id, invited_customer_id, customer_role, created_at)  values ($1, (select id from customer where email = $2), $3, 'now()');",
     )
     .bind(folder_id)
-    .bind(invited_customer_id)
+    .bind(invited_customer_email)
     .bind(customer_role)
     .execute(&mut database_connection)
     .await?;

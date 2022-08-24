@@ -4,18 +4,37 @@ use sqlx::types::chrono::Utc;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct InviteDto {
+pub struct InvitePatchDto {
     folder_id: Uuid,
     invited_customer_id: Uuid,
     customer_role: CustomerFolderRole,
 }
 
-impl InviteDto {
+impl InvitePatchDto {
     pub fn folder_id(&self) -> Uuid {
         self.folder_id
     }
     pub fn invited_customer_id(&self) -> Uuid {
         self.invited_customer_id
+    }
+    pub fn customer_role(&self) -> CustomerFolderRole {
+        self.customer_role
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct InvitePostDto {
+    folder_id: Uuid,
+    invited_customer_email: String,
+    customer_role: CustomerFolderRole,
+}
+
+impl InvitePostDto {
+    pub fn folder_id(&self) -> Uuid {
+        self.folder_id
+    }
+    pub fn invited_customer_email(&self) -> &str {
+        &self.invited_customer_email
     }
     pub fn customer_role(&self) -> CustomerFolderRole {
         self.customer_role
