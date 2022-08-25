@@ -12,10 +12,14 @@ pub async fn get_folders(folder_id: &Uuid) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    let response = sqlx::query_as::<_, Income>("select * from income where folder_id = $1;")
+    let response = match sqlx::query_as::<_, Income>("select * from income where folder_id = $1;")
         .bind(folder_id)
         .fetch_all(&mut database_connection)
-        .await?;
+        .await
+    {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response(),
+    };
 
     database_connection.close();
     println!("Incomes from db: {:?}", &response);

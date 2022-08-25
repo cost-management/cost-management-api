@@ -9,63 +9,49 @@ use uuid::Uuid;
 
 pub async fn post_folder(user_id: &Uuid, body: &str) -> Result<Value, Error> {
     println!("POST /folder method started");
-    let body: FolderInsertDto = serde_json::from_str(body)?;
+    let body: FolderInsertDto = match serde_json::from_str(body) {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_on_deserialization_response(),
+    };
 
     println!("body: {:?}", body);
-
-    let folder_id = Uuid::from_str(body.id().to_string().replace('"', "").as_str())?;
-    let title = body.title().to_string().replace('"', "");
-    let folder_type = FolderType::from_str(
-        body.folder_type()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let currency = Currency::from_str(
-        body.currency()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let folder_skin = FolderSkin::from_str(
-        body.skin()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let units = body.units();
-    let nanos = body.nanos();
 
     let mut database_connection = database_utils::create_connection().await;
 
     println!("Connected to database");
 
-    let mut tx = database_connection.begin().await?;
+    let mut tx = match database_connection.begin().await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_on_create_transaction(),
+    };
 
     println!("Transaction was created");
 
-    sqlx::query("insert into folder (id, title, folder_type, currency, skin, units, nanos, created_at) values ($1, $2, $3, $4, $5, $6, $7, 'now()');")
-        .bind(folder_id)
-        .bind(title)
-        .bind(folder_type)
-        .bind(currency)
-        .bind(folder_skin)
-        .bind(units)
-        .bind(nanos)
-        .execute(&mut tx).await?;
+    match sqlx::query("insert into folder (id, title, folder_type, currency, skin, units, nanos, created_at) values ($1, $2, $3, $4, $5, $6, $7, 'now()');")
+        .bind(body.id())
+        .bind(body.title())
+        .bind(body.folder_type())
+        .bind(body.currency())
+        .bind(body.skin())
+        .bind(body.units())
+        .bind(body.nanos())
+        .execute(&mut tx).await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response()
+    };
 
-    sqlx::query("insert into customer_folder (customer_id, folder_id, customer_role) values ($1, $2, 'OWNER');")
+    match sqlx::query("insert into customer_folder (customer_id, folder_id, customer_role) values ($1, $2, 'OWNER');")
         .bind(user_id)
-        .bind(folder_id)
-        .execute(&mut tx).await?;
+        .bind(body.id())
+        .execute(&mut tx).await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response()
+    };
 
-    tx.commit().await?;
+    match tx.commit().await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_on_commit_transaction_response(),
+    };
 
     println!("Transaction was committed");
 
@@ -86,11 +72,13 @@ mod tests {
     fn test_post_folder() -> Result<(), String> {
         let uuid = Uuid::new_v4();
         let body = json!({
-            "id": &uuid,
-            "title": "test_folder",
-            "folder_type": "CARD",
-            "currency": "UAH",
-            "skin": "BLUE"
+            "id":"5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b",
+            "title":"",
+            "folder_type":"CASH",
+            "currency":"UAH",
+            "skin":"RED",
+            "units": 10,
+            "nanos":12
         })
         .to_string();
         let actual = post_folder(&uuid, &body);

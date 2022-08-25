@@ -10,53 +10,31 @@ use crate::utils::{database_utils, responses};
 
 pub async fn put_folder(body: &str) -> Result<Value, Error> {
     println!("PUT /folder method started");
-    let body: FolderUpdateDto = serde_json::from_str(body)?;
+    let body: FolderUpdateDto = match serde_json::from_str(body) {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_on_deserialization_response(),
+    };
 
     println!("body: {:?}", body);
-
-    let folder_id = Uuid::from_str(body.id().to_string().replace('"', "").as_str())?;
-    let title = body.title().to_string().replace('"', "");
-    let folder_type = FolderType::from_str(
-        body.folder_type()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let currency = Currency::from_str(
-        body.currency()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let folder_skin = FolderSkin::from_str(
-        body.skin()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-
-    println!("Variables from payload are set");
 
     let mut database_connection = database_utils::create_connection().await;
 
     println!("Connected to database");
 
-    sqlx::query(
+    match sqlx::query(
         "update folder set (title, folder_type, currency, skin) = ($1, $2, $3, $4) where id = $5;",
     )
-    .bind(title)
-    .bind(folder_type)
-    .bind(currency)
-    .bind(folder_skin)
-    .bind(folder_id)
+    .bind(body.title())
+    .bind(body.folder_type())
+    .bind(body.currency())
+    .bind(body.skin())
+    .bind(body.id())
     .execute(&mut database_connection)
-    .await?;
+    .await
+    {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response(),
+    };
 
     database_connection.close();
 

@@ -3,11 +3,13 @@ mod income;
 mod invite;
 mod utils;
 
+use crate::utils::responses::{get_fail_uuid_response, get_id_is_absent_response};
 use aws_lambda_events::apigw::ApiGatewayProxyRequest;
 use lambda_http::http::Method;
 use lambda_http::{lambda_runtime, lambda_runtime::Error, service_fn};
 use lambda_runtime::LambdaEvent;
 use serde_json::{json, Value};
+use std::process::id;
 use std::str::FromStr;
 use uuid::Uuid;
 
@@ -19,7 +21,16 @@ async fn main() -> Result<(), Error> {
 }
 
 async fn start_lambda(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<Value, Error> {
-    let user_id = Uuid::from_str(event.payload.headers.get("id").unwrap().to_str()?)?;
+    let option_id_from_header = event.payload.headers.get("id");
+
+    let user_id = if event.payload.headers.get("id").is_some() {
+        match Uuid::from_str(option_id_from_header.unwrap().to_str()?) {
+            Ok(val) => val,
+            Err(err) => return get_fail_uuid_response(),
+        }
+    } else {
+        return get_id_is_absent_response();
+    };
 
     println!("{}", &user_id);
     //let user_id = Uuid::from_str("f89de55c-3ce0-4151-b835-b834ccbc32a1")?;
