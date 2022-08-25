@@ -5,7 +5,6 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use crate::income::dto::dtos::IncomeDto;
-use crate::income::entity::entities::IncomeCategory;
 use crate::utils::{database_utils, responses};
 
 pub async fn post_income(body: &str) -> Result<Value, Error> {
@@ -20,14 +19,7 @@ pub async fn post_income(body: &str) -> Result<Value, Error> {
     let income_id = Uuid::from_str(body.id().to_string().replace('"', "").as_str())?;
     let customer_id = Uuid::from_str(body.customer_id().to_string().replace('"', "").as_str())?;
     let title = body.title().to_string().replace('"', "");
-    let income_category = IncomeCategory::from_str(
-        body.income_category()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
+    let income_category = body.income_category();
     let folder_id = Uuid::from_str(body.folder_id().to_string().replace('"', "").as_str())?;
     let units = body.units();
     let nanos = body.nanos();

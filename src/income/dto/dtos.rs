@@ -1,14 +1,12 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::income::entity::entities::IncomeCategory;
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IncomeDto {
     id: Uuid,
     title: String,
     folder_id: Uuid,
-    income_category: IncomeCategory,
+    income_category: String,
     customer_id: Uuid,
     units: i64,
     nanos: i16,
@@ -25,8 +23,8 @@ impl IncomeDto {
     pub fn folder_id(&self) -> Uuid {
         self.folder_id
     }
-    pub fn income_category(&self) -> IncomeCategory {
-        self.income_category
+    pub fn income_category(&self) -> &str {
+        &self.income_category
     }
     pub fn customer_id(&self) -> Uuid {
         self.customer_id
