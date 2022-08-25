@@ -12,13 +12,13 @@ pub async fn get_invites(user_id: &Uuid) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    let response = sqlx::query_as::<_, Invite>("select folder.id, title, folder_type, currency, skin, invite.created_at, customer.email from folder join invite on folder.id = invite.folder_id join customer on customer.id = invite.invited_customer_id  where customer.id = $1;")
+    let response = sqlx::query_as::<_, Invite>("select folder.id, title, folder_type, currency, skin, invite.created_at, customer.email, customer_role from folder join invite on folder.id = invite.folder_id join customer on customer.id = invite.invited_customer_id  where customer.id = $1;")
         .bind(user_id)
         .fetch_all(&mut database_connection)
         .await?;
 
     database_connection.close();
-    println!("Incomes from db: {:?}", &response);
+    println!("Invites from db: {:?}", &response);
 
     responses::get_ok_response(json!(response))
 }
