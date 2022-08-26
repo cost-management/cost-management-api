@@ -136,10 +136,11 @@ impl FolderCustomerDto {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FolderCustomerMetadata {
     customer_id: Uuid,
     customer_role: CustomerFolderRole,
+    customer_email: String,
 }
 
 impl FolderCustomerMetadata {
@@ -149,10 +150,15 @@ impl FolderCustomerMetadata {
     pub fn customer_role(&self) -> CustomerFolderRole {
         self.customer_role
     }
-    pub fn new(customer_id: Uuid, customer_role: CustomerFolderRole) -> Self {
+    pub fn new(
+        customer_id: Uuid,
+        customer_role: CustomerFolderRole,
+        customer_email: String,
+    ) -> Self {
         Self {
             customer_id,
             customer_role,
+            customer_email,
         }
     }
 }

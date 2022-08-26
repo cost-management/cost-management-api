@@ -15,7 +15,7 @@ pub async fn get_folders(user_id: &Uuid) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    let folders = match sqlx::query_as::<_, Folder>("select * from folder join customer_folder on customer_folder.folder_id = folder.id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
+    let folders = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, units, nanos, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
         .bind(user_id)
         .fetch_all(&mut database_connection).await {
         Ok(val) => val,
@@ -35,11 +35,22 @@ fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
         HashMap::with_capacity(folders.capacity());
 
     for folder in folders {
-        let metadata = FolderCustomerMetadata::new(folder.customer_id(), folder.customer_role());
+        let metadata = FolderCustomerMetadata::new(
+            folder.customer_id(),
+            folder.customer_role(),
+            folder.email().to_string(),
+        );
 
         temp_map
             .entry(folder.id().to_string())
-            .and_modify(|f| f.folder_customer_metadata().push(metadata))
+            .and_modify(|f| {
+                f.folder_customer_metadata()
+                    .push(FolderCustomerMetadata::new(
+                        folder.customer_id(),
+                        folder.customer_role(),
+                        folder.email().to_string(),
+                    ))
+            })
             .or_insert_with(|| {
                 FolderCustomerDto::new(
                     folder.id(),
@@ -50,7 +61,11 @@ fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
                     folder.nanos(),
                     folder.skin(),
                     folder.created_at(),
-                    vec![metadata],
+                    vec![FolderCustomerMetadata::new(
+                        folder.customer_id(),
+                        folder.customer_role(),
+                        folder.email().to_string(),
+                    )],
                 )
             });
     }
