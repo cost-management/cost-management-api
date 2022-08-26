@@ -15,9 +15,12 @@ pub async fn get_folders(user_id: &Uuid) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    let folders = sqlx::query_as::<_, Folder>("select * from folder join customer_folder on customer_folder.folder_id = folder.id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
+    let folders = match sqlx::query_as::<_, Folder>("select * from folder join customer_folder on customer_folder.folder_id = folder.id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
         .bind(user_id)
-        .fetch_all(&mut database_connection).await?;
+        .fetch_all(&mut database_connection).await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response()
+    };
 
     let response = map_to_folder_dto(folders);
 

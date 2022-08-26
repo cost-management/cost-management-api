@@ -5,46 +5,33 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use crate::income::dto::dtos::IncomeDto;
-use crate::income::entity::entities::IncomeCategory;
 use crate::utils::{database_utils, responses};
 
 pub async fn post_income(body: &str) -> Result<Value, Error> {
     println!("POST /incomes method started");
-    let body: IncomeDto = serde_json::from_str(body)?;
+    let body: IncomeDto = match serde_json::from_str(body) {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_on_deserialization_response(),
+    };
 
     println!("body: {:?}", body);
     let mut database_connection = database_utils::create_connection().await;
 
     println!("Connected to database");
 
-    let income_id = Uuid::from_str(body.id().to_string().replace('"', "").as_str())?;
-    let customer_id = Uuid::from_str(body.customer_id().to_string().replace('"', "").as_str())?;
-    let title = body.title().to_string().replace('"', "");
-    let income_category = IncomeCategory::from_str(
-        body.income_category()
-            .to_string()
-            .to_ascii_uppercase()
-            .replace('"', "")
-            .as_str(),
-    )
-    .unwrap();
-    let folder_id = Uuid::from_str(body.folder_id().to_string().replace('"', "").as_str())?;
-    let units = body.units();
-    let nanos = body.nanos();
-    let timezone = body.timezone();
-
-    println!("Variables from payload are set");
-
-    sqlx::query("INSERT INTO income (id, customer_id, title, income_category, folder_id, units, nanos, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'now()');")
-        .bind(income_id)
-        .bind(customer_id)
-        .bind(title)
-        .bind(income_category)
-        .bind(folder_id)
-        .bind(units)
-        .bind(nanos)
-        .bind(timezone)
-        .execute(&mut database_connection).await?;
+    match sqlx::query("INSERT INTO income (id, customer_id, title, income_category, folder_id, units, nanos, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'now()');")
+        .bind(body.id())
+        .bind(body.customer_id())
+        .bind(body.title())
+        .bind(body.income_category())
+        .bind(body.folder_id())
+        .bind(body.units())
+        .bind(body.nanos())
+        .bind(body.timezone())
+        .execute(&mut database_connection).await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response()
+    };
 
     database_connection.close();
 

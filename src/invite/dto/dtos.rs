@@ -33,8 +33,8 @@ impl InvitePostDto {
     pub fn folder_id(&self) -> Uuid {
         self.folder_id
     }
-    pub fn invited_customer_email(&self) -> &str {
-        &self.invited_customer_email
+    pub fn invited_customer_email(&self) -> String {
+        self.invited_customer_email.to_ascii_lowercase()
     }
     pub fn customer_role(&self) -> CustomerFolderRole {
         self.customer_role
