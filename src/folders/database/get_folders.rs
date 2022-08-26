@@ -35,11 +35,6 @@ fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
         HashMap::with_capacity(folders.capacity());
 
     for folder in folders {
-        let metadata = FolderCustomerMetadata::new(
-            folder.customer_id(),
-            folder.customer_role(),
-            folder.email().to_string(),
-        );
 
         temp_map
             .entry(folder.id().to_string())
