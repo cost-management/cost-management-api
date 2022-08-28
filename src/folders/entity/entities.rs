@@ -1,3 +1,4 @@
+use crate::folders::dto::dtos::{FolderCustomerDto, FolderCustomerMetadata};
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::Utc;
 use std::fmt;
@@ -7,6 +8,7 @@ use uuid::Uuid;
 #[derive(Debug, sqlx::FromRow, sqlx::Type, Serialize, Deserialize)]
 pub struct Folder {
     id: Uuid,
+    email: String,
     customer_id: Uuid,
     customer_role: CustomerFolderRole,
     title: String,
@@ -21,6 +23,9 @@ pub struct Folder {
 impl Folder {
     pub fn id(&self) -> Uuid {
         self.id
+    }
+    pub fn email(&self) -> &str {
+        &self.email
     }
     pub fn customer_id(&self) -> Uuid {
         self.customer_id
@@ -40,14 +45,14 @@ impl Folder {
     pub fn nanos(&self) -> i16 {
         self.nanos
     }
+    pub fn skin(&self) -> FolderSkin {
+        self.skin
+    }
     pub fn currency(&self) -> Currency {
         self.currency
     }
     pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
         self.created_at
-    }
-    pub fn skin(&self) -> FolderSkin {
-        self.skin
     }
 }
 

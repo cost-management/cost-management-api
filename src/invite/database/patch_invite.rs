@@ -1,6 +1,7 @@
-use crate::folders::entity::entities::CustomerFolderRole;
+use crate::folders::database::get_folders::map_to_folder_dto;
+use crate::folders::entity::entities::{CustomerFolderRole, Folder};
 use lambda_runtime::Error;
-use serde_json::Value;
+use serde_json::{json, Value};
 use sqlx::Connection;
 use std::str::FromStr;
 use uuid::Uuid;
@@ -53,6 +54,13 @@ pub async fn patch_invite(body: &str) -> Result<Value, Error> {
         Err(err) => return responses::get_fail_query_response(),
     };
 
+    let response = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, units, nanos, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id = $1;")
+        .bind(body.folder_id())
+        .fetch_all(&mut tx).await {
+        Ok(val) => val,
+        Err(err) => return responses::get_fail_query_response()
+    };
+
     match tx.commit().await {
         Ok(val) => val,
         Err(err) => return responses::get_fail_on_commit_transaction_response(),
@@ -64,5 +72,5 @@ pub async fn patch_invite(body: &str) -> Result<Value, Error> {
 
     println!("Database connection is closed");
 
-    responses::get_ok_response_with_id(body.folder_id())
+    responses::get_ok_response(json!(map_to_folder_dto(response)))
 }
