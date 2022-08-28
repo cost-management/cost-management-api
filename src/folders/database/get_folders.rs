@@ -30,12 +30,11 @@ pub async fn get_folders(user_id: &Uuid) -> Result<Value, Error> {
     responses::get_ok_response(json!(response))
 }
 
-fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
+pub fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
     let mut temp_map: HashMap<String, FolderCustomerDto> =
         HashMap::with_capacity(folders.capacity());
 
     for folder in folders {
-
         temp_map
             .entry(folder.id().to_string())
             .and_modify(|f| {
