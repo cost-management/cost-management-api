@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use sqlx::types::chrono::Utc;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -11,6 +12,7 @@ pub struct IncomeDto {
     units: i64,
     nanos: i16,
     timezone: i16,
+    created_at: sqlx::types::chrono::DateTime<Utc>,
 }
 
 impl IncomeDto {
@@ -37,5 +39,8 @@ impl IncomeDto {
     }
     pub fn timezone(&self) -> i16 {
         self.timezone
+    }
+    pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
+        self.created_at
     }
 }

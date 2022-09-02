@@ -78,7 +78,8 @@ mod tests {
             "currency":"UAH",
             "skin":"RED",
             "units": 10,
-            "nanos":12
+            "nanos":12,
+            "created_at":"2019-10-12T07:20:50.52Z"
         })
         .to_string();
         let actual = post_folder(&uuid, &body);
