@@ -19,7 +19,7 @@ pub async fn post_income(body: &str) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    match sqlx::query("INSERT INTO income (id, customer_id, title, income_category, folder_id, units, nanos, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'now()');")
+    match sqlx::query("insert into income (id, customer_id, title, income_category, folder_id, units, nanos, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);")
         .bind(body.id())
         .bind(body.customer_id())
         .bind(body.title())
@@ -28,6 +28,7 @@ pub async fn post_income(body: &str) -> Result<Value, Error> {
         .bind(body.units())
         .bind(body.nanos())
         .bind(body.timezone())
+        .bind(body.created_at())
         .execute(&mut database_connection).await {
         Ok(val) => val,
         Err(err) => return responses::get_fail_query_response()

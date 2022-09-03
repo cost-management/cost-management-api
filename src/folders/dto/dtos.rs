@@ -12,6 +12,7 @@ pub struct FolderInsertDto {
     skin: FolderSkin,
     units: i64,
     nanos: i16,
+    created_at: sqlx::types::chrono::DateTime<Utc>,
 }
 
 impl FolderInsertDto {
@@ -38,6 +39,30 @@ impl FolderInsertDto {
     }
     pub fn nanos(&self) -> i16 {
         self.nanos
+    }
+    pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
+        self.created_at
+    }
+    pub fn new(
+        id: Uuid,
+        title: String,
+        folder_type: FolderType,
+        currency: Currency,
+        skin: FolderSkin,
+        units: i64,
+        nanos: i16,
+        created_at: sqlx::types::chrono::DateTime<Utc>,
+    ) -> Self {
+        Self {
+            id,
+            title,
+            folder_type,
+            currency,
+            skin,
+            units,
+            nanos,
+            created_at,
+        }
     }
 }
 
