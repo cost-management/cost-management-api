@@ -81,7 +81,7 @@ async fn start_lambda(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<Valu
     } else if &invites_path == path {
         match http_method {
             Method::GET => invite::database::get_invites::get_invites(&user_id).await,
-            Method::POST => invite::database::post_invite::post_invite(&body).await,
+            Method::POST => invite::database::post_invite::post_invite(&body, &user_id).await,
             Method::PATCH => invite::database::patch_invite::patch_invite(&body).await,
             _ => Ok(json!({"statusCode": 400})),
         }
