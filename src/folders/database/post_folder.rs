@@ -27,18 +27,14 @@ pub async fn post_folder(user_id: &Uuid, body: &str) -> Result<Value, Error> {
 
     println!("Transaction was created");
 
-    match sqlx::query("insert into folder (id, title, folder_type, currency, skin, units, nanos, created_at) values ($1, $2, $3, $4, $5, $6, $7, 'now()');")
+    sqlx::query("insert into folder (id, title, folder_type, currency, skin, amount, created_at) values ($1, $2, $3, $4, $5, $6, 'now()');")
         .bind(body.id())
         .bind(body.title())
         .bind(body.folder_type())
         .bind(body.currency())
         .bind(body.skin())
-        .bind(body.units())
-        .bind(body.nanos())
-        .execute(&mut tx).await {
-        Ok(val) => val,
-        Err(err) => return responses::get_fail_query_response()
-    };
+        .bind(body.amount())
+        .execute(&mut tx).await?;
 
     match sqlx::query("insert into customer_folder (customer_id, folder_id, customer_role) values ($1, $2, 'OWNER');")
         .bind(user_id)
@@ -70,22 +66,21 @@ mod tests {
 
     #[test]
     fn test_post_folder() -> Result<(), String> {
-        let uuid = Uuid::new_v4();
+        let uuid = Uuid::from_str("5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b").unwrap();
         let body = json!({
             "id":"5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b",
             "title":"",
             "folder_type":"CASH",
             "currency":"UAH",
             "skin":"RED",
-            "units": 10,
-            "nanos":12,
+            "amount": -10.2,
             "created_at":"2019-10-12T07:20:50.52Z"
         })
         .to_string();
         let actual = post_folder(&uuid, &body);
         let expected: Result<Value, ()> = Ok(json!({
             "statusCode": 200,
-            "body" : {"id": uuid.to_string().as_str()},
+            "body" : {"id": "5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b"},
             "isBase64Encoded" : false,
             "headers" : {"content-type" : "application/json"},
         }));

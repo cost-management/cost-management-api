@@ -12,8 +12,7 @@ pub struct Income {
     income_category: String,
     customer_id: Uuid,
     created_at: sqlx::types::chrono::DateTime<Utc>,
-    units: i64,
-    nanos: i16,
+    amount: rust_decimal::Decimal,
     timezone: i16,
 }
 
@@ -36,13 +35,10 @@ impl Income {
     pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
         self.created_at
     }
-    pub fn units(&self) -> i64 {
-        self.units
-    }
-    pub fn nanos(&self) -> i16 {
-        self.nanos
-    }
     pub fn timezone(&self) -> i16 {
         self.timezone
+    }
+    pub fn amount(&self) -> rust_decimal::Decimal {
+        self.amount
     }
 }

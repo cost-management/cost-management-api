@@ -15,7 +15,7 @@ pub async fn get_folders(user_id: &Uuid) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    let folders = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, units, nanos, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
+    let folders = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, amount, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id in (select folder_id from customer_folder where customer_folder.customer_id = $1);")
         .bind(user_id)
         .fetch_all(&mut database_connection).await {
         Ok(val) => val,
@@ -51,8 +51,7 @@ pub fn map_to_folder_dto(folders: Vec<Folder>) -> Vec<FolderCustomerDto> {
                     folder.title().to_string(),
                     folder.folder_type(),
                     folder.currency(),
-                    folder.units(),
-                    folder.nanos(),
+                    folder.amount(),
                     folder.skin(),
                     folder.created_at(),
                     vec![FolderCustomerMetadata::new(

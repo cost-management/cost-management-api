@@ -10,8 +10,7 @@ pub struct FolderInsertDto {
     folder_type: FolderType,
     currency: Currency,
     skin: FolderSkin,
-    units: i64,
-    nanos: i16,
+    amount: rust_decimal::Decimal,
     created_at: sqlx::types::chrono::DateTime<Utc>,
 }
 
@@ -34,12 +33,6 @@ impl FolderInsertDto {
     pub fn skin(&self) -> FolderSkin {
         self.skin
     }
-    pub fn units(&self) -> i64 {
-        self.units
-    }
-    pub fn nanos(&self) -> i16 {
-        self.nanos
-    }
     pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
         self.created_at
     }
@@ -49,8 +42,7 @@ impl FolderInsertDto {
         folder_type: FolderType,
         currency: Currency,
         skin: FolderSkin,
-        units: i64,
-        nanos: i16,
+        amount: rust_decimal::Decimal,
         created_at: sqlx::types::chrono::DateTime<Utc>,
     ) -> Self {
         Self {
@@ -59,10 +51,12 @@ impl FolderInsertDto {
             folder_type,
             currency,
             skin,
-            units,
-            nanos,
+            amount,
             created_at,
         }
+    }
+    pub fn amount(&self) -> rust_decimal::Decimal {
+        self.amount
     }
 }
 
@@ -101,8 +95,7 @@ pub struct FolderCustomerDto {
     title: String,
     folder_type: FolderType,
     currency: Currency,
-    units: i64,
-    nanos: i16,
+    amount: rust_decimal::Decimal,
     skin: FolderSkin,
     created_at: sqlx::types::chrono::DateTime<Utc>,
     folder_customer_metadata: Vec<FolderCustomerMetadata>,
@@ -121,12 +114,6 @@ impl FolderCustomerDto {
     pub fn currency(&self) -> &Currency {
         &self.currency
     }
-    pub fn units(&self) -> i64 {
-        self.units
-    }
-    pub fn nanos(&self) -> i16 {
-        self.nanos
-    }
     pub fn folder_customer_metadata(&mut self) -> &mut Vec<FolderCustomerMetadata> {
         &mut self.folder_customer_metadata
     }
@@ -141,8 +128,7 @@ impl FolderCustomerDto {
         title: String,
         folder_type: FolderType,
         currency: Currency,
-        units: i64,
-        nanos: i16,
+        amount: rust_decimal::Decimal,
         skin: FolderSkin,
         created_at: sqlx::types::chrono::DateTime<Utc>,
         folder_customer_metadata: Vec<FolderCustomerMetadata>,
@@ -152,12 +138,14 @@ impl FolderCustomerDto {
             title,
             folder_type,
             currency,
-            units,
-            nanos,
+            amount,
             skin,
             created_at,
             folder_customer_metadata,
         }
+    }
+    pub fn amount(&self) -> rust_decimal::Decimal {
+        self.amount
     }
 }
 

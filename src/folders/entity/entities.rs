@@ -13,8 +13,7 @@ pub struct Folder {
     customer_role: CustomerFolderRole,
     title: String,
     folder_type: FolderType,
-    units: i64,
-    nanos: i16,
+    amount: rust_decimal::Decimal,
     skin: FolderSkin,
     currency: Currency,
     created_at: sqlx::types::chrono::DateTime<Utc>,
@@ -39,12 +38,6 @@ impl Folder {
     pub fn folder_type(&self) -> FolderType {
         self.folder_type
     }
-    pub fn units(&self) -> i64 {
-        self.units
-    }
-    pub fn nanos(&self) -> i16 {
-        self.nanos
-    }
     pub fn skin(&self) -> FolderSkin {
         self.skin
     }
@@ -53,6 +46,9 @@ impl Folder {
     }
     pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
         self.created_at
+    }
+    pub fn amount(&self) -> rust_decimal::Decimal {
+        self.amount
     }
 }
 
