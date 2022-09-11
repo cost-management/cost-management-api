@@ -19,14 +19,13 @@ pub async fn post_income(body: &str) -> Result<Value, Error> {
 
     println!("Connected to database");
 
-    match sqlx::query("insert into income (id, customer_id, title, income_category, folder_id, units, nanos, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);")
+    match sqlx::query("insert into income (id, customer_id, title, income_category, folder_id, amount, timezone, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);")
         .bind(body.id())
         .bind(body.customer_id())
         .bind(body.title())
         .bind(body.income_category())
         .bind(body.folder_id())
-        .bind(body.units())
-        .bind(body.nanos())
+        .bind(body.amount())
         .bind(body.timezone())
         .bind(body.created_at())
         .execute(&mut database_connection).await {
@@ -53,12 +52,12 @@ mod tests {
         let body = json!({
             "id":"24153ec5-5ec6-4866-b93a-e07ee5e37da6",
             "title":"test",
-            "folder_id":"e23eb1b3-58c2-40a2-ba17-31bcbf261107",
+            "folder_id":"5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b",
             "income_category":"FOOD",
-            "customer_id":"e23eb1b3-58c2-40a2-ba17-31bcbf261107",
-            "units":-1999,
-            "nanos":12,
-            "timezone":3
+            "customer_id":"5cb570e7-fbaa-4f7c-b5fa-88d667d60b3b",
+            "amount":12.90,
+            "timezone":3,
+            "created_at":"2019-10-12T07:20:50.52Z"
         })
         .to_string();
         let actual = post_income(&body);

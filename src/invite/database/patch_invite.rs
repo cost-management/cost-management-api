@@ -54,7 +54,7 @@ pub async fn patch_invite(body: &str) -> Result<Value, Error> {
         Err(err) => return responses::get_fail_query_response(),
     };
 
-    let response = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, units, nanos, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id = $1;")
+    let response = match sqlx::query_as::<_, Folder>("select folder.id, title, folder_type, amount, currency, skin, folder.created_at, customer_id, customer_role, email from folder join customer_folder on customer_folder.folder_id = folder.id join customer c on c.id = customer_folder.customer_id where folder.id = $1;")
         .bind(body.folder_id())
         .fetch_all(&mut tx).await {
         Ok(val) => val,
