@@ -75,7 +75,7 @@ async fn start_lambda(event: LambdaEvent<ApiGatewayProxyRequest>) -> Result<Valu
                 .await
             }
             Method::POST => income::database::post_income::post_income(&body).await,
-            Method::DELETE => income::database::delete_income::delete_folder(&body).await,
+            Method::DELETE => income::database::delete_income::delete_income(&body).await,
             _ => Ok(json!({"statusCode": 400})),
         }
     } else if &invites_path == path {

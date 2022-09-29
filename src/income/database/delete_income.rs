@@ -5,7 +5,7 @@ use sqlx::Connection;
 use std::str::FromStr;
 use uuid::Uuid;
 
-pub async fn delete_folder(body: &str) -> Result<Value, Error> {
+pub async fn delete_income(body: &str) -> Result<Value, Error> {
     println!("DELETE /incomes method started");
     let json_id: Value = serde_json::from_str(body)?;
     let income_id = match Uuid::from_str(json_id["id"].as_str().unwrap()) {
