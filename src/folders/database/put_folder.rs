@@ -22,12 +22,13 @@ pub async fn put_folder(body: &str) -> Result<Value, Error> {
     println!("Connected to database");
 
     match sqlx::query(
-        "update folder set (title, folder_type, currency, skin) = ($1, $2, $3, $4) where id = $5;",
+        "update folder set (title, folder_type, currency, skin, color) = ($1, $2, $3, $4, $5) where id = $6;",
     )
     .bind(body.title())
     .bind(body.folder_type())
     .bind(body.currency())
     .bind(body.skin())
+    .bind(body.color())
     .bind(body.id())
     .execute(&mut database_connection)
     .await

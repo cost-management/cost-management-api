@@ -10,6 +10,7 @@ pub struct FolderInsertDto {
     folder_type: FolderType,
     currency: Currency,
     skin: FolderSkin,
+    color: String,
     amount: rust_decimal::Decimal,
     created_at: sqlx::types::chrono::DateTime<Utc>,
 }
@@ -33,6 +34,9 @@ impl FolderInsertDto {
     pub fn skin(&self) -> FolderSkin {
         self.skin
     }
+    pub fn color(&self) -> &str {
+        &self.color
+    }
     pub fn created_at(&self) -> sqlx::types::chrono::DateTime<Utc> {
         self.created_at
     }
@@ -42,6 +46,7 @@ impl FolderInsertDto {
         folder_type: FolderType,
         currency: Currency,
         skin: FolderSkin,
+        color: String,
         amount: rust_decimal::Decimal,
         created_at: sqlx::types::chrono::DateTime<Utc>,
     ) -> Self {
@@ -51,6 +56,7 @@ impl FolderInsertDto {
             folder_type,
             currency,
             skin,
+            color,
             amount,
             created_at,
         }
@@ -67,6 +73,7 @@ pub struct FolderUpdateDto {
     folder_type: FolderType,
     currency: Currency,
     skin: FolderSkin,
+    color: String,
 }
 
 impl FolderUpdateDto {
@@ -85,6 +92,9 @@ impl FolderUpdateDto {
     pub fn skin(&self) -> FolderSkin {
         self.skin
     }
+    pub fn color(&self) -> &str {
+        &self.color
+    }
 }
 
 impl FolderInsertDto {}
@@ -97,6 +107,7 @@ pub struct FolderCustomerDto {
     currency: Currency,
     amount: rust_decimal::Decimal,
     skin: FolderSkin,
+    color: String,
     created_at: sqlx::types::chrono::DateTime<Utc>,
     folder_customer_metadata: Vec<FolderCustomerMetadata>,
 }
@@ -123,6 +134,9 @@ impl FolderCustomerDto {
     pub fn skin(&self) -> FolderSkin {
         self.skin
     }
+    pub fn color(&self) -> &str {
+        &self.color
+    }
     pub fn new(
         id: Uuid,
         title: String,
@@ -130,6 +144,7 @@ impl FolderCustomerDto {
         currency: Currency,
         amount: rust_decimal::Decimal,
         skin: FolderSkin,
+        color: String,
         created_at: sqlx::types::chrono::DateTime<Utc>,
         folder_customer_metadata: Vec<FolderCustomerMetadata>,
     ) -> Self {
@@ -140,6 +155,7 @@ impl FolderCustomerDto {
             currency,
             amount,
             skin,
+            color,
             created_at,
             folder_customer_metadata,
         }

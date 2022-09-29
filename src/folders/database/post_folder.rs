@@ -27,12 +27,13 @@ pub async fn post_folder(user_id: &Uuid, body: &str) -> Result<Value, Error> {
 
     println!("Transaction was created");
 
-    sqlx::query("insert into folder (id, title, folder_type, currency, skin, amount, created_at) values ($1, $2, $3, $4, $5, $6, 'now()');")
+    sqlx::query("insert into folder (id, title, folder_type, currency, skin, color, amount, created_at) values ($1, $2, $3, $4, $5, $6, $7, 'now()');")
         .bind(body.id())
         .bind(body.title())
         .bind(body.folder_type())
         .bind(body.currency())
         .bind(body.skin())
+        .bind(body.color())
         .bind(body.amount())
         .execute(&mut tx).await?;
 

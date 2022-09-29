@@ -15,6 +15,7 @@ pub struct Folder {
     folder_type: FolderType,
     amount: rust_decimal::Decimal,
     skin: FolderSkin,
+    color: String,
     currency: Currency,
     created_at: sqlx::types::chrono::DateTime<Utc>,
 }
@@ -40,6 +41,9 @@ impl Folder {
     }
     pub fn skin(&self) -> FolderSkin {
         self.skin
+    }
+    pub fn color(&self) -> &str {
+        &self.color
     }
     pub fn currency(&self) -> Currency {
         self.currency
@@ -131,9 +135,12 @@ impl FromStr for CustomerFolderRole {
 #[derive(sqlx::Type, Debug, Serialize, Deserialize, Copy, Clone)]
 #[sqlx(type_name = "folder_skin")]
 pub enum FolderSkin {
-    BLUE,
-    GREEN,
-    RED,
+    SKIN1,
+    SKIN2,
+    SKIN3,
+    SKIN4,
+    SKIN5,
+    SKIN6,
 }
 
 impl fmt::Display for FolderSkin {
@@ -147,9 +154,12 @@ impl FromStr for FolderSkin {
 
     fn from_str(input: &str) -> Result<FolderSkin, Self::Err> {
         match input {
-            "BLUE" => Ok(FolderSkin::BLUE),
-            "GREEN" => Ok(FolderSkin::GREEN),
-            "RED" => Ok(FolderSkin::RED),
+            "SKIN1" => Ok(FolderSkin::SKIN1),
+            "SKIN2" => Ok(FolderSkin::SKIN2),
+            "SKIN3" => Ok(FolderSkin::SKIN3),
+            "SKIN4" => Ok(FolderSkin::SKIN4),
+            "SKIN5" => Ok(FolderSkin::SKIN5),
+            "SKIN6" => Ok(FolderSkin::SKIN6),
             _ => Err(()),
         }
     }
